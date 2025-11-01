@@ -1,4 +1,4 @@
-import {PrismaClient} from "../generated/prisma/client.js";
+import {PrismaClient, type ZapRunOutbox} from "../generated/prisma/client.js";
 import {Kafka} from "kafkajs";
 const client = new PrismaClient();
 
@@ -21,7 +21,7 @@ async function main(){
 
            producer.send({
             topic: TOPIC_NAME,
-            messages: outboxItems.map(r => {
+            messages: outboxItems.map((r: ZapRunOutbox) => {
                 return {
                     value: r.zapRunId,
                 };
@@ -30,7 +30,7 @@ async function main(){
 
         await client.zapRunOutbox.deleteMany({
             where: {
-                id: { in: outboxItems.map(i => i.id) }
+                id: { in: outboxItems.map((i: ZapRunOutbox) => i.id) }
             }
         });
     }
